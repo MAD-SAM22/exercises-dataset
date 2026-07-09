@@ -105,7 +105,8 @@ A step-by-step guide for integrating the dataset into your own application:
 ```
 exercises-dataset/
 ├── data/
-│   └── exercises.json       # Full dataset — 1,324 exercise records (JSON array)
+│   ├── exercises.json        # Full dataset — 1,324 exercise records (JSON array)
+│   └── exercises.schema.json # JSON Schema (2020-12) describing every record
 ├── images/                  # 1,324 × 180×180 thumbnails  (© Gym visual)
 ├── videos/                  # 1,324 × 180×180 animation GIFs  (© Gym visual)
 ├── index.html               # Interactive exercise browser (client-side, no server needed)
@@ -117,6 +118,7 @@ exercises-dataset/
 ### Key Files
 
 - **`data/exercises.json`** — The primary data file. A JSON array of 1,324 exercise objects with all metadata. `image` / `gif_url` point to the local 180×180 assets, and each record carries an `attribution` field; `media_id` holds the original media reference id.
+- **`data/exercises.schema.json`** — A [JSON Schema](https://json-schema.org/) (Draft 2020-12) that formally describes every field, its type and constraints. Use it to validate the dataset or your own additions with any standard JSON Schema validator.
 - **`images/`, `videos/`** — 180×180 thumbnails and animation GIFs (© [Gym visual](https://gymvisual.com/), used with permission).
 - **`index.html`** — Standalone exercise browser. Open directly in any modern browser.
 - **`setup.html`** — Developer guide for DB setup, API integration, and LLM-assisted backend generation.
@@ -169,7 +171,7 @@ exercises-dataset/
 
 ## 🗂️ Data Schema
 
-Each record in `data/exercises.json` follows this structure:
+Each record in `data/exercises.json` follows this structure. A machine-readable [JSON Schema](data/exercises.schema.json) is also provided for validation.
 
 | Field | Type | Description |
 |---|---|---|
@@ -184,6 +186,7 @@ Each record in `data/exercises.json` follows this structure:
 | `instructions.tr` | `string` | Full step-by-step instructions in Turkish |
 | `instructions.ru` | `string` | Full step-by-step instructions in Russian |
 | `instructions.zh` | `string` | Full step-by-step instructions in Chinese |
+| `instruction_steps.<lang>` | `array[string]` | Same instructions split into an ordered array of steps, per language (`en`, `es`, `it`, `tr`, `ru`, `zh`) |
 | `muscle_group` | `string` | Primary synergist muscle group |
 | `secondary_muscles` | `array[string]` | Additional muscles involved |
 | `target` | `string` | Primary target muscle (e.g. `"biceps"`, `"pectoralis major"`) |
