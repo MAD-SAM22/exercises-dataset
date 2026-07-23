@@ -1,31 +1,29 @@
 {
-  "version": 2,
-  "builds": [
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "data/**,images/**,videos/**"
+    }
+  },
+  "rewrites": [
     {
-      "src": "api/index.js",
-      "use": "@vercel/node"
+      "source": "/((?!images|videos|index.html|setup.html).*)",
+      "destination": "/api/index.js"
     }
   ],
-  "routes": [
+  "headers": [
     {
-      "src": "/images/(.*)",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable",
-        "access-control-allow-origin": "*"
-      },
-      "dest": "/images/$1"
+      "source": "/images/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
     },
     {
-      "src": "/videos/(.*)",
-      "headers": {
-        "cache-control": "public, max-age=31536000, immutable",
-        "access-control-allow-origin": "*"
-      },
-      "dest": "/videos/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/api/index.js"
+      "source": "/videos/(.*)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" },
+        { "key": "Access-Control-Allow-Origin", "value": "*" }
+      ]
     }
   ]
 }

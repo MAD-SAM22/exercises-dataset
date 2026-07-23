@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 
-// Resolve path to exercises.json
-const datasetPath = path.join(__dirname, '../../data/exercises.json');
+// Resolve path to exercises.json using process.cwd() for reliable local & serverless execution
+const datasetPath = path.join(process.cwd(), 'data/exercises.json');
 
 let exercises = [];
 let idMap = new Map();
@@ -41,10 +41,8 @@ function loadDataset() {
 
     // Populate lookup map and sets
     exercises.forEach((ex) => {
-      // Map padded 4-digit ID (e.g., "0001")
       idMap.set(ex.id, ex);
 
-      // Also map unpadded integer string (e.g., "1")
       const unpaddedId = String(parseInt(ex.id, 10));
       if (!idMap.has(unpaddedId)) {
         idMap.set(unpaddedId, ex);
@@ -65,9 +63,6 @@ function loadDataset() {
 // Ensure dataset is loaded at startup
 loadDataset();
 
-/**
- * Filter helper for comma-separated string values
- */
 function parseCommaValues(val) {
   if (!val) return [];
   return String(val)
@@ -76,9 +71,6 @@ function parseCommaValues(val) {
     .filter(Boolean);
 }
 
-/**
- * Apply field projection if fields parameter is provided
- */
 function selectFields(item, fieldsList) {
   if (!fieldsList || fieldsList.length === 0) return item;
   const projected = {};
@@ -90,13 +82,9 @@ function selectFields(item, fieldsList) {
   return projected;
 }
 
-/**
- * Get paginated exercises with advanced filtering, sorting, field selection
- */
 function getPaginatedExercises(query = {}) {
   loadDataset();
 
-  // Parse page and limit
   const page = Math.max(1, parseInt(query.page, 10) || 1);
   const limit = Math.min(100, Math.max(1, parseInt(query.limit, 10) || 20));
 
@@ -109,7 +97,6 @@ function getPaginatedExercises(query = {}) {
 
   let filtered = [...exercises];
 
-  // Filter by body_part / category (supports comma-separated multi-select)
   if (bodyPartFilters.length > 0) {
     filtered = filtered.filter((ex) => {
       const bp = ex.body_part ? ex.body_part.toLowerCase() : '';
@@ -118,7 +105,6 @@ function getPaginatedExercises(query = {}) {
     });
   }
 
-  // Filter by equipment (supports comma-separated multi-select)
   if (equipmentFilters.length > 0) {
     filtered = filtered.filter((ex) => {
       const eq = ex.equipment ? ex.equipment.toLowerCase() : '';
@@ -126,7 +112,6 @@ function getPaginatedExercises(query = {}) {
     });
   }
 
-  // Filter by target muscle (supports comma-separated multi-select)
   if (targetFilters.length > 0) {
     filtered = filtered.filter((ex) => {
       const tgt = ex.target ? ex.target.toLowerCase() : '';
@@ -134,7 +119,6 @@ function getPaginatedExercises(query = {}) {
     });
   }
 
-  // Filter by search query q
   if (qFilter) {
     filtered = filtered.filter((ex) => {
       const nameMatch = ex.name && ex.name.toLowerCase().includes(qFilter);
@@ -147,7 +131,6 @@ function getPaginatedExercises(query = {}) {
     });
   }
 
-  // Apply Sorting
   switch (sortOption) {
     case 'name_asc':
     case 'name':
@@ -170,7 +153,6 @@ function getPaginatedExercises(query = {}) {
   const startIndex = (page - 1) * limit;
   let paginatedItems = filtered.slice(startIndex, startIndex + limit);
 
-  // Apply field selection if specified
   if (selectedFields.length > 0) {
     paginatedItems = paginatedItems.map((item) => selectFields(item, selectedFields));
   }
@@ -199,9 +181,6 @@ function getPaginatedExercises(query = {}) {
   };
 }
 
-/**
- * Get exercise by ID
- */
 function getExerciseById(id) {
   loadDataset();
   if (!id) return null;
@@ -220,9 +199,6 @@ function getExerciseById(id) {
   return null;
 }
 
-/**
- * Get multiple exercises by array/list of IDs (Batch lookup)
- */
 function getExercisesByIds(idsArray = []) {
   loadDataset();
   const results = [];
@@ -244,9 +220,6 @@ function getExercisesByIds(idsArray = []) {
   };
 }
 
-/**
- * Get random selection of exercises (e.g., for workout generation or daily exercise)
- */
 function getRandomExercises(query = {}) {
   loadDataset();
   const count = Math.min(50, Math.max(1, parseInt(query.count, 10) || 5));
@@ -267,7 +240,6 @@ function getRandomExercises(query = {}) {
     pool = pool.filter((ex) => ex.target && ex.target.toLowerCase() === targetFilter);
   }
 
-  // Shuffle pool (Fisher-Yates)
   const shuffled = [...pool];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -277,9 +249,6 @@ function getRandomExercises(query = {}) {
   return shuffled.slice(0, count);
 }
 
-/**
- * Fast search suggestions for mobile app search input
- */
 function getSuggestions(qStr, limit = 10) {
   loadDataset();
   if (!qStr) return [];
@@ -304,9 +273,6 @@ function getSuggestions(qStr, limit = 10) {
   return matches;
 }
 
-/**
- * Dataset overview statistics for mobile app filter screens
- */
 function getDatasetStats() {
   loadDataset();
 
@@ -342,25 +308,16 @@ function getDatasetStats() {
   };
 }
 
-/**
- * Get sorted list of categories / body parts
- */
 function getCategories() {
   loadDataset();
   return Array.from(categoriesSet).sort();
 }
 
-/**
- * Get sorted list of equipment types
- */
 function getEquipments() {
   loadDataset();
   return Array.from(equipmentsSet).sort();
 }
 
-/**
- * Get sorted list of target muscles
- */
 function getTargets() {
   loadDataset();
   return Array.from(targetsSet).sort();

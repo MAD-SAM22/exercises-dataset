@@ -1,0 +1,351 @@
+{
+  "info": {
+    "_postman_id": "f08cd4b5-84d9-4877-bfec-2f3cda4378a2",
+    "name": "Exercises API (Production)",
+    "description": "Production Postman collection for Exercises API hosted at https://exercises-dataset-mu.vercel.app with pagination, filtering, search, batch lookup, random selection, suggestions, dataset stats, and static media endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Exercises",
+      "item": [
+        {
+          "name": "Get Paginated Exercises",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/exercises?page=1&limit=20&body_part=waist&equipment=body weight&target=abs&q=sit-up",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "exercises"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (default: 1)"
+                },
+                {
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Items per page (default: 20, max: 100)"
+                },
+                {
+                  "key": "body_part",
+                  "value": "waist",
+                  "description": "Filter by body part ('back', 'cardio', 'chest', 'lower arms', 'lower legs', 'neck', 'shoulders', 'upper arms', 'upper legs', 'waist')"
+                },
+                {
+                  "key": "equipment",
+                  "value": "body weight",
+                  "description": "Filter by equipment ('body weight', 'dumbbell', 'barbell', etc.)"
+                },
+                {
+                  "key": "target",
+                  "value": "abs",
+                  "description": "Filter by primary target muscle"
+                },
+                {
+                  "key": "q",
+                  "value": "sit-up",
+                  "description": "Search keyword for exercise name or muscles"
+                }
+              ]
+            },
+            "description": "Retrieves a paginated list of exercise records with support for search and filtering."
+          }
+        },
+        {
+          "name": "Get Exercises with Multi-Select & Sorting & Fields",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/exercises?body_part=chest,waist&sort=name_asc&fields=id,name,category,target,equipment,image,gif_url&limit=10",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "exercises"
+              ],
+              "query": [
+                {
+                  "key": "body_part",
+                  "value": "chest,waist",
+                  "description": "Comma-separated body parts"
+                },
+                {
+                  "key": "sort",
+                  "value": "name_asc",
+                  "description": "Sort order ('name_asc', 'name_desc', 'id_asc', 'id_desc')"
+                },
+                {
+                  "key": "fields",
+                  "value": "id,name,category,target,equipment,image,gif_url",
+                  "description": "Comma-separated list of fields to include in response"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Retrieve exercises with multi-value filtering, custom sorting, and partial field selection."
+          }
+        },
+        {
+          "name": "Get Single Exercise by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{BASE_URL}}/exercises/:id",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "exercises",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "0001",
+                  "description": "Zero-padded 4-digit or numeric exercise ID"
+                }
+              ]
+            },
+            "description": "Fetch a single exercise object by its unique ID."
+          }
+        },
+        {
+          "name": "Batch Fetch Exercises by IDs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ids\": [\"0001\", \"0025\", \"0032\", \"0652\"]\n}"
+            },
+            "url": {
+              "raw": "{{BASE_URL}}/exercises/batch",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "exercises",
+                "batch"
+              ]
+            },
+            "description": "Fetch multiple exercises by a list of IDs in a single HTTP request."
+          }
+        },
+        {
+          "name": "Get Random Exercises (Workout Generator)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/exercises/random?count=5&body_part=chest",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "exercises",
+                "random"
+              ],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "5",
+                  "description": "Number of random exercises to select"
+                },
+                {
+                  "key": "body_part",
+                  "value": "chest",
+                  "description": "Optional body part filter"
+                }
+              ]
+            },
+            "description": "Get random exercises for routine generators or Exercise of the Day features."
+          }
+        },
+        {
+          "name": "Get Search Suggestions (Autocomplete)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/exercises/suggestions?q=press&limit=5",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "exercises",
+                "suggestions"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "press",
+                  "description": "Search term for auto-complete"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            },
+            "description": "Lightweight search suggestions for mobile app search bars."
+          }
+        },
+        {
+          "name": "Get Dataset Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/exercises/stats",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "exercises",
+                "stats"
+              ]
+            },
+            "description": "Fetch total exercise count and breakdowns by body part, equipment, and target."
+          }
+        },
+        {
+          "name": "Get Categories List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/exercises/categories",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "exercises",
+                "categories"
+              ]
+            },
+            "description": "Fetch supported body_part / category filter strings."
+          }
+        },
+        {
+          "name": "Get Equipment List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/exercises/equipments",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "exercises",
+                "equipments"
+              ]
+            },
+            "description": "Fetch list of all supported equipment types."
+          }
+        },
+        {
+          "name": "Get Target Muscles List",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/exercises/targets",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "exercises",
+                "targets"
+              ]
+            },
+            "description": "Fetch list of all primary target muscles."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Media",
+      "item": [
+        {
+          "name": "Fetch Exercise Thumbnail Image",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/images/0001-2gPfomN.jpg",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "images",
+                "0001-2gPfomN.jpg"
+              ]
+            },
+            "description": "Fetch 180x180 JPG thumbnail image."
+          }
+        },
+        {
+          "name": "Fetch Exercise Animation GIF",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{BASE_URL}}/videos/0001-2gPfomN.gif",
+              "host": [
+                "{{BASE_URL}}"
+              ],
+              "path": [
+                "videos",
+                "0001-2gPfomN.gif"
+              ]
+            },
+            "description": "Fetch 180x180 animated GIF exercise demonstration."
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "BASE_URL",
+      "value": "https://exercises-dataset-mu.vercel.app"
+    }
+  ]
+}
