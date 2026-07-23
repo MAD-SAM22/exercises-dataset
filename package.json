@@ -1,0 +1,26 @@
+{
+  "name": "exercises-api",
+  "version": "1.0.0",
+  "description": "Production-ready Node.js API server for exercise dataset deployment on Vercel",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node test/api.test.js"
+  },
+  "keywords": [
+    "exercises",
+    "fitness",
+    "api",
+    "vercel",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0"
+  }
+}
